@@ -27,7 +27,27 @@ if uploaded_file:
     st.image(image, caption="Your copy")
 
     # OCR (simple version)
-    text = pytesseract.image_to_string(image)
+    import base64
+from io import BytesIO
+
+buffered = BytesIO()
+image.save(buffered, format="PNG")
+img_str = base64.b64encode(buffered.getvalue()).decode()
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "Extract the English text from this student copy."},
+                {"type": "image_url", "image_url": f"data:image/png;base64,{img_str}"}
+            ],
+        }
+    ],
+)
+
+text = response.choices[0].message.content
     st.session_state.text = text
 
     st.subheader("Extracted text:")
