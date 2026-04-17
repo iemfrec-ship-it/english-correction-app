@@ -48,7 +48,7 @@ response = client.chat.completions.create(
 )
 
 text = response.choices[0].message.content
-    st.session_state.text = text
+st.session_state.text = text
 
     st.subheader("Extracted text:")
     st.write(text)
